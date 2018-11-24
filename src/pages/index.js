@@ -6,6 +6,8 @@ import styled from 'react-emotion'
 
 import Bio from '../components/Bio'
 import Layout from '../components/layout'
+import { PostPreview } from '../components/BlogArchive/PostPreview'
+import { BlogArchiveLayout } from '../components/BlogArchive/BlogArchiveLayout'
 
 const PostDate = styled.small`
   color: red;
@@ -30,19 +32,25 @@ class BlogIndex extends React.Component {
           meta={[{ name: 'description', content: siteDescription }]}
           title={siteTitle}
         />
-        {posts.map(({ node: post }) => {
-          const title = get(post, 'frontmatter.title') || post.fields.slug
+        <BlogArchiveLayout>{
+          ({getLayout}) => (
+            <>
+              {posts.map(({ node: post }, index) => {
+                const title = get(post, 'frontmatter.title') || post.fields.slug
 
-          return (
-            <div key={post.fields.slug}>
-              <h3>
-                <Link to={post.fields.slug}>{title}</Link>
-              </h3>
-              <PostDate>{post.frontmatter.date}</PostDate>
-              <p dangerouslySetInnerHTML={{ __html: post.excerpt }} />
-            </div>
+                return (
+                  <PostPreview
+                    excerpt={post.excerpt}
+                    title={title}
+                    slug={post.fields.slug}
+                    emotion={getLayout(index)}
+                  />
+                )
+              })}
+            </>
           )
-        })}
+        }
+        </BlogArchiveLayout>
         <Bio />
       </Layout>
     )
